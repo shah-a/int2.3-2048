@@ -36,10 +36,10 @@ body {
 }
 
 .tile {
-  --x: 1;
+  /* --x: 1;
   --y: 2;
   --background-lightness: 80%;
-  --text-lightness: 20%;
+  --text-lightness: 20%; */
   position: absolute;
   display: flex;
   justify-content: center;
@@ -52,4 +52,13 @@ body {
   font-weight: bold;
   background-color: hsl(0, 50%, var(--background-lightness));
   color: hsl(0, 25%, var(--text-lightness));
+  animation: show 200ms ease;
+  transition: 100ms ease-in-out;
+}
+
+@keyframes show {
+  0% {
+    opacity: 0.5;
+    transform: scale(0);
+  }
 }
