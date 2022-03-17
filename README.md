@@ -1,4 +1,4 @@
-# 2048
+# 2048 Clone
 
 This project follows a [tutorial](https://www.youtube.com/watch?v=wOVEe9eawXc) from WebDevSimplified to make a clone of the popular game 2048.
 
