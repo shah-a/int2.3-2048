@@ -28,6 +28,15 @@ class Grid {
     }
     return cells;
   }
+
+  get #emptyCells() {
+    return this.#cells.filter((cell) => cell.tile === undefined);
+  }
+
+  randomEmptyCell() {
+    const randomIndex = Math.floor(Math.random() * this.#emptyCells.length)
+    return this.#emptyCells[randomIndex];
+  }
 }
 
 export default Grid;
