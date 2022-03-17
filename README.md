@@ -8,4 +8,4 @@ This implementation of the game is modelled after this webapp: https://2048daily
 
 ## How to Play
 
-The game is available live at: https://int-2048.netlify.app/
+To play, visit: https://int-2048.netlify.app/
