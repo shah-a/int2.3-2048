@@ -30,6 +30,14 @@ class Grid {
     }, []);
   }
 
+  get cellsByRow() {
+    return this.#cells.reduce((cellGrid, cell) => {
+      cellGrid[cell.y] = cellGrid[cell.y] || [];
+      cellGrid[cell.y][cell.x] = cell;
+      return cellGrid;
+    }, []);
+  }
+
   #generateCells(gridElement) {
     const cells = [];
     for (let i = 0; i < GRID_SIZE ** 2; i++) {

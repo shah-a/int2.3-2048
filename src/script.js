@@ -46,19 +46,19 @@ function handleInput(e) {
 }
 
 function moveUp() {
-  return slideTiles(grid.cellsByColumn)
+  slideTiles(grid.cellsByColumn)
 }
 
 function moveDown() {
-  // slideTiles(grid.cellsByColumn)
+  slideTiles(grid.cellsByColumn.map((column) => [...column].reverse()));
 }
 
 function moveRight() {
-  // slideTiles(grid.cellsByRow)
+  slideTiles(grid.cellsByRow.map((row) => [...row].reverse()));
 }
 
 function moveLeft() {
-  // slideTiles(grid.cellsByRow)
+  slideTiles(grid.cellsByRow)
 }
 
 function slideTiles(cells) {
