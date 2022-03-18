@@ -14,6 +14,9 @@ const grid = new Grid(gameboard);
 grid.randomEmptyCell().tile = new Tile(gameboard);
 grid.randomEmptyCell().tile = new Tile(gameboard);
 
+gameboard.addEventListener('touchmove', (e) => e.preventDefault())
+SwipeListener(gameboard);
+
 setupInput();
 
 // -------------------------
@@ -21,10 +24,20 @@ setupInput();
 // -------------------------
 
 function setupInput() {
-  window.addEventListener('keydown', handleInput, { once: true });
+  document.addEventListener('keydown', handleInput, { once: true });
+  gameboard.addEventListener('swipe', handleInput, { once: true });
 }
 
 async function handleInput(e) {
+  console.log(e.detail.directions);
+
+  if (e.type === 'swipe') {
+    if (e.detail.directions.top) e.key = 'ArrowUp';
+    if (e.detail.directions.bottom) e.key = 'ArrowDown';
+    if (e.detail.directions.right) e.key = 'ArrowRight';
+    if (e.detail.directions.left) e.key = 'ArrowLeft';
+  }
+
   switch (e.key) {
     case 'ArrowUp':
       if (!t.canMoveUp(grid)) {
