@@ -30,10 +30,15 @@ function setupInput() {
 
 async function handleInput(e) {
   if (e.type === 'swipe') {
-    if (e.detail.directions.top) e.key = 'ArrowUp';
-    if (e.detail.directions.bottom) e.key = 'ArrowDown';
-    if (e.detail.directions.right) e.key = 'ArrowRight';
-    if (e.detail.directions.left) e.key = 'ArrowLeft';
+    if (e.detail.directions.top) {
+      e.key = 'ArrowUp'
+    } else if (e.detail.directions.bottom) {
+      e.key = 'ArrowDown'
+    } else if (e.detail.directions.right) {
+      e.key = 'ArrowRight'
+    } else if (e.detail.directions.left) {
+      e.key = 'ArrowLeft'
+    }
   }
 
   switch (e.key) {
