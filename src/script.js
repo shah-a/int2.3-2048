@@ -29,8 +29,6 @@ function setupInput() {
 }
 
 async function handleInput(e) {
-  console.log(e.detail.directions);
-
   if (e.type === 'swipe') {
     if (e.detail.directions.top) e.key = 'ArrowUp';
     if (e.detail.directions.bottom) e.key = 'ArrowDown';
