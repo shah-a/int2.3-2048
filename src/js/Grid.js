@@ -23,7 +23,7 @@ class Grid {
   }
 
   get #emptyCells() {
-    return this.#cells.filter((cell) => cell.tile === undefined);
+    return this.#cells.filter((cell) => !cell.tile);
   }
 
   get cellsByColumn() {
