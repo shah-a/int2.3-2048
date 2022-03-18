@@ -1,5 +1,6 @@
 import Grid from './js/Grid.js';
 import Tile from './js/Tile.js';
+import * as t from './js/tileLogic.js';
 
 const gameboard = document.querySelector('#gameboard');
 
@@ -26,32 +27,32 @@ function setupInput() {
 async function handleInput(e) {
   switch (e.key) {
     case 'ArrowUp':
-      if (!canMoveUp()) {
+      if (!t.canMoveUp(grid)) {
         setupInput();
         return;
       }
-      await moveUp();
+      await t.moveUp(grid);
       break;
     case 'ArrowDown':
-      if (!canMoveDown()) {
+      if (!t.canMoveDown(grid)) {
         setupInput();
         return;
       }
-      await moveDown();
+      await t.moveDown(grid);
       break;
     case 'ArrowRight':
-      if (!canMoveRight()) {
+      if (!t.canMoveRight(grid)) {
         setupInput();
         return;
       }
-      await moveRight();
+      await t.moveRight(grid);
       break;
     case 'ArrowLeft':
-      if (!canMoveLeft()) {
+      if (!t.canMoveLeft(grid)) {
         setupInput();
         return;
       }
-      await moveLeft();
+      await t.moveLeft(grid);
       break;
     default:
       setupInput();
@@ -61,10 +62,9 @@ async function handleInput(e) {
   grid.cells.forEach((cell) => cell.mergeTiles());
 
   const newTile = new Tile(gameboard);
-  console.log(grid.randomEmptyCell().tile)
   grid.randomEmptyCell().tile = newTile;
 
-  if (!canMoveUp() && !canMoveDown() && !canMoveRight() && !canMoveLeft()) {
+  if (!t.canMoveUp(grid) && !t.canMoveDown(grid) && !t.canMoveRight(grid) && !t.canMoveLeft(grid)) {
     newTile.waitForTransition(true).then(() => {
       alert('Game Over!');
     });
@@ -72,77 +72,4 @@ async function handleInput(e) {
   }
 
   setupInput();
-}
-
-function moveUp() {
-  return slideTiles(grid.cellsByColumn)
-}
-
-function moveDown() {
-  return slideTiles(grid.cellsByColumn.map((column) => [...column].reverse()));
-}
-
-function moveRight() {
-  return slideTiles(grid.cellsByRow.map((row) => [...row].reverse()));
-}
-
-function moveLeft() {
-  return slideTiles(grid.cellsByRow)
-}
-
-function canMoveUp() {
-  return canMove(grid.cellsByColumn)
-}
-
-function canMoveDown() {
-  return canMove(grid.cellsByColumn.map((column) => [...column].reverse()));
-}
-
-function canMoveRight() {
-  return canMove(grid.cellsByRow.map((row) => [...row].reverse()));
-}
-
-function canMoveLeft() {
-  return canMove(grid.cellsByRow)
-}
-
-
-function slideTiles(cells) {
-  return Promise.all(
-    cells.flatMap((group) => {
-      const promises = [];
-      for (let i = 1; i < group.length; i++) {
-        const cell = group[i];
-        if (!cell.tile) continue;
-
-        let lastValidCell;
-        for (let j = i - 1; j >= 0; j--) {
-          const moveToCell = group[j]
-          if (!moveToCell.canAccept(cell.tile)) break;
-          lastValidCell = moveToCell;
-        }
-
-        if (lastValidCell) {
-          promises.push(cell.tile.waitForTransition())
-          if (lastValidCell.tile) {
-            lastValidCell.mergeTile = cell.tile;
-          } else {
-            lastValidCell.tile = cell.tile;
-          }
-          cell.tile = null;
-        }
-      }
-      return promises;
-    })
-  );
-}
-
-function canMove(cells) {
-  return cells.some((group) => {
-    return group.some((cell, index) => {
-      if (index === 0 || !cell.tile) return false;
-      const moveToCell = group[index - 1];
-      return moveToCell.canAccept(cell.tile);
-    });
-  });
 }
