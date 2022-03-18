@@ -18,6 +18,18 @@ class Grid {
     });
   }
 
+  get #emptyCells() {
+    return this.#cells.filter((cell) => cell.tile === undefined);
+  }
+
+  get cellsByColumn() {
+    return this.#cells.reduce((cellGrid, cell) => {
+      cellGrid[cell.x] = cellGrid[cell.x] || [];
+      cellGrid[cell.x][cell.y] = cell;
+      return cellGrid;
+    }, []);
+  }
+
   #generateCells(gridElement) {
     const cells = [];
     for (let i = 0; i < GRID_SIZE ** 2; i++) {
@@ -27,10 +39,6 @@ class Grid {
       gridElement.append(cell);
     }
     return cells;
-  }
-
-  get #emptyCells() {
-    return this.#cells.filter((cell) => cell.tile === undefined);
   }
 
   randomEmptyCell() {
