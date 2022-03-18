@@ -18,6 +18,10 @@ class Grid {
     });
   }
 
+  get cells() {
+    return this.#cells;
+  }
+
   get #emptyCells() {
     return this.#cells.filter((cell) => cell.tile === undefined);
   }

@@ -11,6 +11,10 @@ class Tile {
     tileContainer.append(this.#tileElement);
   }
 
+  get value() {
+    return this.#value;
+  }
+
   set value(v) {
     this.#value = v;
     this.#tileElement.textContent = this.#value;
@@ -31,6 +35,10 @@ class Tile {
   set y(value) {
     this.#y = value;
     this.#tileElement.style.setProperty('--y', this.#y);
+  }
+
+  remove() {
+    this.tileElement.remove();
   }
 }
 

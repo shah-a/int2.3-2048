@@ -48,6 +48,13 @@ class Cell {
     if (unmerged && sameValue) return true;
     return false;
   }
+
+  mergeTiles() {
+    if (!this.tile || !this.mergeTile) return;
+    this.tile.value += this.mergeTile.value;
+    this.mergeTile.remove();
+    this.mergeTile = null;
+  }
 }
 
 export default Cell;
