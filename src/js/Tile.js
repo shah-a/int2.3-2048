@@ -38,7 +38,13 @@ class Tile {
   }
 
   remove() {
-    this.tileElement.remove();
+    this.#tileElement.remove();
+  }
+
+  waitForTransition(animation = false) {
+    return new Promise((res) => {
+      this.#tileElement.addEventListener(animation ? 'animationend' : 'transitionend', res, { once: true });
+    })
   }
 }
 

@@ -2,6 +2,7 @@ import Grid from './js/Grid.js';
 import Tile from './js/Tile.js';
 
 const gameboard = document.querySelector('#gameboard');
+
 const grid = new Grid(gameboard);
 
 // Use this to test what a populated gameboard looks like:
@@ -22,66 +23,126 @@ function setupInput() {
   window.addEventListener('keydown', handleInput, { once: true });
 }
 
-function handleInput(e) {
+async function handleInput(e) {
   switch (e.key) {
     case 'ArrowUp':
-      moveUp();
+      if (!canMoveUp()) {
+        setupInput();
+        return;
+      }
+      await moveUp();
       break;
     case 'ArrowDown':
-      moveDown();
+      if (!canMoveDown()) {
+        setupInput();
+        return;
+      }
+      await moveDown();
       break;
     case 'ArrowRight':
-      moveRight();
+      if (!canMoveRight()) {
+        setupInput();
+        return;
+      }
+      await moveRight();
       break;
     case 'ArrowLeft':
-      moveLeft();
+      if (!canMoveLeft()) {
+        setupInput();
+        return;
+      }
+      await moveLeft();
       break;
     default:
+      setupInput();
       return;
   }
 
   grid.cells.forEach((cell) => cell.mergeTiles());
 
+  const newTile = new Tile(gameboard);
+  console.log(grid.randomEmptyCell().tile)
+  grid.randomEmptyCell().tile = newTile;
+
+  if (!canMoveUp() && !canMoveDown() && !canMoveRight() && !canMoveLeft()) {
+    newTile.waitForTransition(true).then(() => {
+      alert('Game Over!');
+    });
+    return;
+  }
+
   setupInput();
 }
 
 function moveUp() {
-  slideTiles(grid.cellsByColumn)
+  return slideTiles(grid.cellsByColumn)
 }
 
 function moveDown() {
-  slideTiles(grid.cellsByColumn.map((column) => [...column].reverse()));
+  return slideTiles(grid.cellsByColumn.map((column) => [...column].reverse()));
 }
 
 function moveRight() {
-  slideTiles(grid.cellsByRow.map((row) => [...row].reverse()));
+  return slideTiles(grid.cellsByRow.map((row) => [...row].reverse()));
 }
 
 function moveLeft() {
-  slideTiles(grid.cellsByRow)
+  return slideTiles(grid.cellsByRow)
 }
 
+function canMoveUp() {
+  return canMove(grid.cellsByColumn)
+}
+
+function canMoveDown() {
+  return canMove(grid.cellsByColumn.map((column) => [...column].reverse()));
+}
+
+function canMoveRight() {
+  return canMove(grid.cellsByRow.map((row) => [...row].reverse()));
+}
+
+function canMoveLeft() {
+  return canMove(grid.cellsByRow)
+}
+
+
 function slideTiles(cells) {
-  cells.forEach((group) => {
-    for (let i = 1; i < group.length; i++) {
-      const cell = group[i];
-      if (!cell.tile) continue;
+  return Promise.all(
+    cells.flatMap((group) => {
+      const promises = [];
+      for (let i = 1; i < group.length; i++) {
+        const cell = group[i];
+        if (!cell.tile) continue;
 
-      let lastValidCell;
-      for (let j = i - 1; j >= 0; j--) {
-        const moveToCell = group[j]
-        if (!moveToCell.canAccept(cell.tile)) break;
-        lastValidCell = moveToCell;
-      }
-
-      if (lastValidCell) {
-        if (lastValidCell.tile) {
-          lastValidCell.mergeTile = cell.tile;
-        } else {
-          lastValidCell.tile = cell.tile;
+        let lastValidCell;
+        for (let j = i - 1; j >= 0; j--) {
+          const moveToCell = group[j]
+          if (!moveToCell.canAccept(cell.tile)) break;
+          lastValidCell = moveToCell;
         }
-        cell.tile = null;
+
+        if (lastValidCell) {
+          promises.push(cell.tile.waitForTransition())
+          if (lastValidCell.tile) {
+            lastValidCell.mergeTile = cell.tile;
+          } else {
+            lastValidCell.tile = cell.tile;
+          }
+          cell.tile = null;
+        }
       }
-    }
+      return promises;
+    })
+  );
+}
+
+function canMove(cells) {
+  return cells.some((group) => {
+    return group.some((cell, index) => {
+      if (index === 0 || !cell.tile) return false;
+      const moveToCell = group[index - 1];
+      return moveToCell.canAccept(cell.tile);
+    });
   });
 }
